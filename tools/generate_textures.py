@@ -97,7 +97,7 @@ def save(rgb, name, q=82):
     """Write the full plate plus a 1200px variant for srcset."""
     OUT.mkdir(parents=True, exist_ok=True)
     img = Image.fromarray((rgb * 255).astype(np.uint8))
-    img.save(OUT / name, "JPEG", quality=q, optimize=True, progressive=True)
+    img.save(OUT / name, "JPEG", quality=q - 6, optimize=True, progressive=True)
     small = img.copy()
     small.thumbnail((1200, 1200), Image.LANCZOS)
     small.save(OUT / name.replace(".jpg", "-1200.jpg"), "JPEG", quality=q, optimize=True, progressive=True)
@@ -414,7 +414,7 @@ def plate_weave_rug(w=2000, h=1600, name="weave-rug.jpg"):
 
 
 def leather(w, h, seed=111):
-    """Banana-fibre based alternative leather: pebble grain, cognac tone."""
+    """Banana-fibre vegan leather: pebble grain, cognac tone."""
     n = noise(h, w, 22, 4, seed=seed)
     warp = noise(h, w, 90, 3, seed=seed + 1)
     cells = np.abs(np.sin((n * 6 + warp * 4) * np.pi))
@@ -432,7 +432,7 @@ def plate_leather(w=2000, h=1600, name="leather.jpg"):
 
 
 def plate_seam(w=2000, h=1600, name="seam.jpg"):
-    """Product detail: woven banana fibre stitched to alternative leather."""
+    """Product detail: woven banana fibre stitched to vegan leather."""
     pal = [(0, "#2a1d10"), (0.3, "#7d6036"), (0.55, "#b89763"), (0.8, "#dcc394"), (1, "#f1e3bf")]
     cloth = weave(w, h, 30, 27, 0.12, pal, seed=140, hair=0.06)
     hide = leather(w, h, seed=150)

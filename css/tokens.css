@@ -1,7 +1,7 @@
 /* ==========================================================================
    RE-BANATEX — Design tokens
    Palette is drawn from the material itself: natural paper, raw fibre,
-   dried stem, Rwandan laterite and charcoal. Green is a trace, not a theme.
+   dried stem, Rwandan laterite and charcoal. Green appears only in the stem imagery.
    ========================================================================== */
 
 @font-face {
@@ -48,15 +48,13 @@
   --paper-deep: #E4D9C5;   /* raw textile — alternate sections     */
   --bone:       #F6F1E7;   /* lightest surface                     */
   --fibre:      #C8A76B;   /* extracted banana fibre               */
-  --fibre-deep: #9A7642;   /* dried fibre / stem                   */
   --laterite:   #8F4A2B;   /* Rwandan red earth — signature accent */
   --laterite-deep: #6E3820;
-  --leaf:       #5E6643;   /* muted botanical — used sparingly     */
   --charcoal:   #1B1916;   /* dark sections                        */
   --charcoal-2: #26231F;
   --ink:        #221F1B;   /* primary text on light                */
   --ink-soft:   #5A5248;   /* secondary text on light              */
-  --ink-faint:  #8A8073;   /* captions, meta                       */
+  --ink-faint:  #645B4F;   /* captions, meta (AA on paper)         */
   --on-dark:    #EDE5D6;   /* primary text on dark                 */
   --on-dark-soft: #A79E90;
 
@@ -81,9 +79,9 @@
 
   /* ---- Space ---- */
   --gutter:  clamp(16px, 4vw, 64px);        /* page side padding        */
+  /* distance from content edge to viewport edge — for full-bleed images */
+  --bleed:   calc(var(--gutter) + max(0px, (100vw - var(--max)) / 2));
   --col-gap: clamp(16px, 2vw, 32px);
-  --s-1: 0.5rem;
-  --s-2: 1rem;
   --s-3: 1.5rem;
   --s-4: 2.5rem;
   --s-5: clamp(3rem, 2rem + 4vw, 6rem);

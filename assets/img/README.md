@@ -3,8 +3,9 @@
 ## `material/` — material plates
 
 Studio-style macro plates (fibre, stem, yarn, weaves, leather, seam, loom,
-stacked stems). They are generated procedurally by `tools/generate_textures.py`
-as stand-ins until real macro photography is shot. Each exists at full size
+stacked stems). They depict the material, never people or facilities.
+They are generated procedurally by `tools/generate_textures.py` as
+stand-ins until real macro photography is shot. Each exists at full size
 and as a `-1200.jpg` variant for `srcset`.
 
 To swap in real photography, keep the filename (and add the `-1200` variant).
@@ -12,7 +13,11 @@ To swap in real photography, keep the filename (and add the `-1200` variant).
 ## `photo/` — photography slots
 
 These files do not exist yet. Until they are added, each slot shows a
-material plate as a fallback (handled in `js/main.js → initPhotoSlots`).
+material plate as a fallback, with alt text describing the plate (handled in
+`js/main.js → initPhotoSlots`). The founder portrait has no stand-in: the
+slot stays hidden until `founder.jpg` exists, so a person is never shown as
+a texture.
+
 Drop real RE-BANATEX photographs here with these names and they appear
 automatically — no code change needed.
 
@@ -20,7 +25,7 @@ automatically — no code change needed.
 | --- | --- | --- |
 | `farmers-stems.jpg` | 07 Origin, wide | Farmers with harvested stems / stems being collected. Landscape 16:10, ≥2000px wide. Real people at work, no posed smiles to camera. |
 | `workshop-loom.jpg` | 07 Origin | Hands at a handloom, tight crop on yarn and fingers. Portrait 4:5. |
-| `founder.jpg` | 07 Origin, quote | Jonathan Shauri, ideally with the extraction machine. Square, ≥400px. |
+| `founder.jpg` | 07 Origin, quote | Jonathan Shauri, ideally with the extraction machine. Square, ≥400px. Hidden until supplied. |
 | `product-laptop-bag.jpg` | 06 Products, feature + hover | Laptop bag on a neutral paper/stone ground, side light. 4:3. |
 | `product-carry-bag.jpg` | 06 Products, hover | As above. Portrait 4:5. |
 | `product-backpack.jpg` | 06 Products, hover | As above. Portrait 4:5. |

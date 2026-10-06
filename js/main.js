@@ -12,6 +12,7 @@ const CONFIG = {
   formEndpoint: '',
   contactEmail: '',
   fallbackContact: 'Instagram @rebanatex',
+  fallbackUrl: 'https://www.instagram.com/rebanatex/',
 };
 
 (() => {
@@ -174,6 +175,8 @@ const CONFIG = {
     const swatches = $$('[data-swatch]', book);
     const views = $$('[data-swatch-view]', book);
     const tag = $('[data-swatch-tag]', book);
+    const sampleLink = $('[data-sample-link]');
+    const sampleName = $('[data-sample-name]');
 
     const activate = (btn) => {
       const key = btn.dataset.swatch;
@@ -183,7 +186,11 @@ const CONFIG = {
         s.setAttribute('aria-pressed', String(on));
       });
       views.forEach((v) => v.classList.toggle('is-active', v.dataset.swatchView === key));
-      if (tag) tag.textContent = `${$('.swatch__key', btn).textContent} — ${$('.swatch__name', btn).textContent}`;
+      const name = $('.swatch__name', btn).textContent;
+      if (tag) tag.textContent = `${$('.swatch__key', btn).textContent} — ${name}`;
+      // the sample link follows the selected form and pre-fills the enquiry
+      if (sampleName) sampleName.textContent = name.toLowerCase();
+      if (sampleLink) sampleLink.dataset.prefill = `Sample request: ${name}.`;
     };
     swatches.forEach((s) => {
       s.addEventListener('click', () => activate(s));
@@ -201,6 +208,7 @@ const CONFIG = {
     const num = $('[data-step-num]', root);
     const bar = $('[data-step-bar]', root);
     let current = 0;
+    bar.style.transform = `scaleX(${1 / steps.length})`;
 
     const setStep = (i) => {
       if (i === current) return;
@@ -223,7 +231,9 @@ const CONFIG = {
 
   /* ---------------------------------------------------------------- Photo slots
      <img data-fallback="..."> shows a material plate until the real
-     photograph exists at its src. */
+     photograph exists at its src; data-fallback-alt describes the plate.
+     data-fallback="none" hides the slot instead (used for portraits, so a
+     person is never represented by a stand-in image). */
   const photoCache = new Map();
   function photoExists(src) {
     if (!photoCache.has(src)) {
@@ -241,8 +251,11 @@ const CONFIG = {
       const fallback = () => {
         if (img.dataset.fellBack) return;
         img.dataset.fellBack = '1';
+        const slot = img.closest('.plate');
+        if (img.dataset.fallback === 'none') { if (slot) slot.hidden = true; return; }
         img.src = img.dataset.fallback;
-        img.closest('.plate')?.classList.add('is-fallback');
+        if (img.dataset.fallbackAlt) img.alt = img.dataset.fallbackAlt;
+        slot?.classList.add('is-fallback');
       };
       img.addEventListener('error', fallback, { once: true });
       if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) fallback();
@@ -283,48 +296,34 @@ const CONFIG = {
     list.addEventListener('mouseleave', () => { active = false; box.classList.remove('is-visible'); });
   }
 
-  /* ---------------------------------------------------------------- Counters */
-  function initCounters() {
-    const els = $$('[data-count]');
-    if (reduced || !('IntersectionObserver' in window)) return;
-    const run = (el) => {
-      const end = parseFloat(el.dataset.count);
-      const dec = parseInt(el.dataset.decimals || '0', 10);
-      const suffix = el.dataset.suffix || '';
-      const t0 = performance.now();
-      const dur = 1400;
-      const tick = (t) => {
-        const p = Math.min(1, (t - t0) / dur);
-        const e = 1 - Math.pow(1 - p, 4);
-        el.textContent = (end * e).toFixed(dec) + suffix;
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    };
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((en) => { if (en.isIntersecting) { run(en.target); io.unobserve(en.target); } });
-    }, { threshold: 0.6 });
-    els.forEach((el) => io.observe(el));
-  }
-
   /* ---------------------------------------------------------------- Enquiry routes + form */
   function initForm() {
     const form = $('[data-form]');
     if (!form) return;
     const status = $('[data-form-status]', form);
 
-    // Any [data-route] link pre-selects the matching enquiry type
+    const message = $('textarea[name="message"]', form);
+
+    // Any [data-route] link pre-selects the matching enquiry type;
+    // [data-prefill] also starts the message if it is still empty
     $$('[data-route]').forEach((a) => {
       a.addEventListener('click', () => {
         const radio = $(`input[name="route"][value="${a.dataset.route}"]`, form);
         if (radio) radio.checked = true;
+        if (a.dataset.prefill && !message.value.trim()) message.value = `${a.dataset.prefill}\n\n`;
       });
     });
 
-    const setStatus = (msg, kind) => {
+    const setStatus = (msg, kind, link) => {
       status.textContent = msg;
+      if (link) {
+        const a = document.createElement('a');
+        a.href = link.href; a.textContent = link.text; a.target = '_blank'; a.rel = 'noopener';
+        status.append(' ', a, '.');
+      }
       status.className = `form__status${kind ? ` is-${kind}` : ''}`;
     };
+    const fallbackLink = { href: CONFIG.fallbackUrl, text: CONFIG.fallbackContact };
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -355,7 +354,7 @@ const CONFIG = {
           form.reset();
           setStatus(`Thank you, ${data.name.split(' ')[0]}. We’ll be in touch.`, 'ok');
         } catch (err) {
-          setStatus(`Something went wrong. Please try again, or reach us on ${CONFIG.fallbackContact}.`, 'error');
+          setStatus('Something went wrong. Please try again, or reach us on', 'error', fallbackLink);
         }
         return;
       }
@@ -376,7 +375,7 @@ const CONFIG = {
       }
 
       console.warn('[RE-BANATEX] Enquiry form not connected: set CONFIG.formEndpoint or CONFIG.contactEmail in js/main.js');
-      setStatus(`Online enquiries are being set up. For now, please reach us on ${CONFIG.fallbackContact}.`, 'error');
+      setStatus('Online enquiries are being set up. For now, please reach us on', '', fallbackLink);
     });
 
     form.addEventListener('input', (e) => e.target.closest('.field')?.classList.remove('is-invalid'));
@@ -392,7 +391,6 @@ const CONFIG = {
   initProcess();
   initPhotoSlots();
   initIndexPreview();
-  initCounters();
   initForm();
   const yr = $('[data-year]');
   if (yr) yr.textContent = new Date().getFullYear();

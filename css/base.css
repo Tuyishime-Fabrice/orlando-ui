@@ -208,7 +208,7 @@ sup { font-size: .6em; color: var(--laterite); }
 .plate--square { aspect-ratio: 1 / 1; }
 .plate--tall { aspect-ratio: 3 / 4; }
 /* captioned plates: the image keeps its own ratio, the caption flows below */
-.plate:has(> .caption) { background: none; align-self: start; }
+.plate:has(> .caption) { background: none; }
 .plate:has(> .caption) > img { height: auto; background: var(--paper-deep); }
 .plate:has(> .caption)::after { display: none; }
 
