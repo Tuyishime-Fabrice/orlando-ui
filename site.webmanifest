@@ -1,10 +1,10 @@
 {
-  "name": "Ingabo Kreatives",
+  "name": "Ingabo Kreative",
   "short_name": "Ingabo",
   "start_url": "/",
   "display": "browser",
-  "background_color": "#F7F5F0",
-  "theme_color": "#171717",
+  "background_color": "#0A2471",
+  "theme_color": "#0A2471",
   "icons": [
     { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }

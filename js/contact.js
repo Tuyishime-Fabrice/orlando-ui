@@ -1,5 +1,5 @@
 /* ==========================================================================
-   INGABO KREATIVES — Contact / booking form
+   INGABO KREATIVE — Contact / booking form
    - Client-side validation with inline and summary messages
    - If IK_CONFIG.formEndpoint is set, the form is POSTed there.
    - If not, nothing is "sent" silently: the visitor gets a ready-made
@@ -107,7 +107,7 @@
   function buildMessage() {
     var serviceText = fields.service.options[fields.service.selectedIndex].text;
     var lines = [
-      "Hello " + (CONFIG.businessName || "Ingabo Kreatives") + ", I'd like to make an inquiry.",
+      "Hello " + (CONFIG.businessName || "Ingabo Kreative") + ", I'd like to make an inquiry.",
       "",
       "Name: " + fields.name.value.trim(),
       "Email: " + fields.email.value.trim(),

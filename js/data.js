@@ -1,5 +1,5 @@
 /* ==========================================================================
-   INGABO KREATIVES — CONTENT DATA
+   INGABO KREATIVE — CONTENT DATA
    Edit portfolio projects and testimonials here. No other file needs to
    change when you add, remove or reorder projects.
    ========================================================================== */
@@ -35,7 +35,7 @@ window.IK_DATA = {
                   file. When set, the item opens as a playable film.
 
      All images below are TEMPORARY PLACEHOLDERS from Unsplash.
-     Replace them with real Ingabo Kreatives projects before launch. */
+     Replace them with real Ingabo Kreative projects before launch. */
   portfolio: [
     {
       title: "Leaving as one",

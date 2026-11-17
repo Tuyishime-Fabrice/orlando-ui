@@ -1,6 +1,6 @@
-# Ingabo Kreatives — website
+# Ingabo Kreative — website
 
-A fast, static website for **Ingabo Kreatives**, a photography and videography agency in Kigali, Rwanda.
+A fast, static website for **Ingabo Kreative**, a photography and videography agency in Kigali, Rwanda.
 Plain HTML, CSS and JavaScript: no framework, no build step, no database. It runs on any ordinary web host.
 
 ---
@@ -34,7 +34,8 @@ ingabo-kreatives/
 │   └── contact.js        Form validation and WhatsApp/email hand-off
 │
 └── assets/
-    ├── fonts/            Self-hosted Archivo + Cormorant Garamond (subset, variable)
+    ├── brand/            Logo SVGs (lockup, wordmark, mark), social card, square logo
+    ├── fonts/            Self-hosted Archivo (subset variable font)
     ├── icons/            PNG app icons
     └── images/
         ├── hero/         Home page slideshow (desktop + phone crops)
@@ -70,7 +71,7 @@ The site is just files, so any host works:
 - **Netlify:** drag the folder onto <https://app.netlify.com/drop>. `404.html` is picked up automatically.
 - **GitHub Pages / Cloudflare Pages / Vercel:** publish the folder as a static site; no build command is needed.
 
-**Before launch, replace the placeholder domain.** Search all files for `https://www.ingabokreatives.com` and replace it with your real domain. It appears in:
+**Before launch, replace the placeholder domain.** Search all files for `https://www.ingabokreative.com` and replace it with your real domain. It appears in:
 
 - every `.html` file (`canonical`, `og:url`, `og:image`)
 - the structured data blocks in `index.html` and `services.html`
@@ -87,7 +88,7 @@ Every WhatsApp button, phone number, email link and social icon on the site read
 ```js
 whatsappNumber: "2507XXXXXXXX",   // ← replace
 phoneDisplay:   "+250 7XX XXX XXX",
-email:          "hello@ingabokreatives.com",
+email:          "hello@ingabokreative.com",
 ```
 
 **WhatsApp number format:** digits only, country code first, no `+`, no spaces, no leading `0`.
@@ -119,7 +120,7 @@ Links like `contact.html?service=weddings` pre-select the service (the *Request 
 
 ## 6. Replacing the images
 
-All images are **temporary placeholders** from Unsplash (see `assets/images/CREDITS.md`). Replace them with the agency's own work before launch. The site should only show work Ingabo Kreatives actually produced.
+All images are **temporary placeholders** from Unsplash (see `assets/images/CREDITS.md`). Replace them with the agency's own work before launch. The site should only show work Ingabo Kreative actually produced.
 
 **The easy way: overwrite files, keeping the same filename.** Nothing else needs to change.
 
@@ -144,6 +145,19 @@ Tips:
 - **If a photo's proportions change** (e.g. portrait → landscape), update its `width`/`height` in `data.js` (portfolio) or in the `<img>` tag (other pages). They only describe the shape, to stop the page jumping while loading. Most frames crop to a fixed shape, so they rarely need touching.
 - **Focal point:** some `<img>` tags have `style="object-position: 50% 30%"`. Adjust it if a face gets cropped (first value = left↔right, second = top↔bottom).
 - If an image is missing or fails to load, the frame shows a neutral "Image coming soon" instead of a broken icon.
+
+### 6b. Logo and brand files
+
+| File | Use |
+|---|---|
+| `assets/brand/logo-lockup.svg` | Full logo ("ingabo" + "KREATIVE"): footer |
+| `assets/brand/logo-wordmark.svg` | "ingabo" only: header and mobile menu |
+| `assets/brand/logo-mark.svg` | The dotted "i": basis of the favicon |
+| `assets/brand/og-image.jpg` | 1200 × 630 card shown when the site is shared on WhatsApp, Facebook, LinkedIn |
+| `assets/brand/logo-512.png` | Square logo for Google's business information |
+| `favicon.svg`, `assets/icons/*.png` | Browser tab and home-screen icons |
+
+The SVG letters use `currentColor`, so one file works on both backgrounds: the site shows it navy on light and white on navy, while the dot always stays brand yellow. The header and footer embed the logo markup inline (in every page), so if the logo artwork changes, replace the `<svg>…</svg>` inside `<a class="logo …">` on each page with the new file's contents (keep `aria-hidden="true"` on the `<svg>`).
 
 ---
 
@@ -176,15 +190,17 @@ Defined once as CSS variables at the top of `css/style.css`:
 
 | Token group | Values |
 |---|---|
-| **Colour** | Charcoal `#171717` · Ivory `#F7F5F0` · Sand `#EDE8DF` · White · Stone `#6B6760` (secondary text, AA on ivory) · Grey `#9A9690` (secondary text on dark) · Accent `#B68B62` (rules, details, text on dark) · Accent-deep `#86603D` (accent text on light, AA) · WhatsApp green `#187A42` (AA with white) |
-| **Type** | **Archivo** (variable weight *and* width): wide caps for display headlines, normal width for UI and body. **Cormorant Garamond** for editorial statements and quotes only. Fluid scale `--fs-xs` → `--fs-hero`. |
+| **Colour** | Taken from the logo: brand navy `#0A2471` (dark sections, buttons, logo on light) · navy-deep `#061650` (hover) · brand yellow `#FFB90B` (the dot on the i: primary buttons on navy, numbers, details) · ivory `#F7F6F2` (background) · navy-tint `#ECEEF5` (alternate background) · ink `#0E1838` (text) · stone `#5A6075` (secondary text, AA) · `#B4BCDC` (secondary text on navy, AA) · WhatsApp green `#187A42` (AA with white) |
+| **Type** | **Archivo** only (variable weight *and* width): wide caps for display headlines, regular weight for editorial statements, normal width for UI and body. One font file keeps pages fast. Fluid scale `--fs-xs` → `--fs-hero`. |
 | **Spacing** | 4 px base scale `--s-1` … `--s-10`, fluid `--section-y`, `--gutter`, `--grid-gap` |
 | **Layout** | Container 1360 px, 12-column editorial grid on desktop |
 | **Radii** | Deliberately minimal: 0 / 2 px / 4 px; pills only for filter chips and round buttons |
 | **Motion** | `--ease-out`, durations 160 / 320 / 700 ms; one orchestrated hero entrance; all motion disabled under *reduce motion* |
 | **Breakpoints** | mobile-first: 600 · 700 · 900 · 1000 · 1200 px |
 
-Design notes: the photography carries the colour, so the interface stays neutral. The one bold move is the wide, film-title-style headline set over the hero image, with a small caption plate naming each frame. Numbering appears only where content is a real sequence (the 4-step process).
+Buttons: navy on light backgrounds, yellow on navy. The yellow is never used for text on light backgrounds (it fails contrast there).
+
+Design notes: navy and yellow carry the brand; the photography carries everything else. The one bold move is the wide, film-title-style headline set over the hero image, with a small caption plate naming each frame. Numbering appears only where content is a real sequence (the 4-step process).
 
 ---
 
@@ -212,7 +228,7 @@ Already in place:
 
 After launch:
 
-1. Create or claim a **Google Business Profile** for Ingabo Kreatives. It matters more than anything else for local "near me" searches.
+1. Create or claim a **Google Business Profile** for Ingabo Kreative. It matters more than anything else for local "near me" searches.
 2. Submit `sitemap.xml` in **Google Search Console**.
 3. Once confirmed, add `telephone`, `email`, `sameAs` (social profile URLs) and, if you have a public studio, `streetAddress` and `openingHours` to the structured data in `index.html`.
 
@@ -228,11 +244,11 @@ Tested in Chromium at 320, 375/390, 820, 1440 px:
 
   | Page | Performance (desktop / mobile) | Accessibility | Best practices | SEO |
   |---|---|---|---|---|
-  | Home | 97 / 81 | 100 | 100 | 100 |
+  | Home | 97 / 89 | 100 | 100 | 100 |
   | Services | 99 / 81 | 100 | 100 | 100 |
   | Portfolio | 95 / 77 | 100 | 100 | 100 |
   | About | 98 / 80 | 100 | 100 | 100 |
-  | Contact | 100 / 99 | 100 | 100 | 100 |
+  | Contact | 100 / 98 | 100 | 100 | 100 |
 
   Layout shift (CLS) is 0 on every page. Mobile scores use Lighthouse's throttled slow-4G profile and are photo-weight bound. Following the image guidance in section 6 keeps them there; a CDN or host with HTTP/2 and caching will improve real-world numbers further.
 - No horizontal scrolling at 320 px. No JavaScript errors.
@@ -248,18 +264,19 @@ Tested in Chromium at 320, 375/390, 820, 1440 px:
 | Email address | `js/config.js` → `email` |
 | Social profile URLs | `js/config.js` → `social` |
 | Form service (optional) | `js/config.js` → `formEndpoint` |
-| Website domain | all `.html` files, `sitemap.xml`, `robots.txt` (search `ingabokreatives.com`) |
+| Website domain | all `.html` files, `sitemap.xml`, `robots.txt` (search `ingabokreative.com`) |
 | All photographs | `assets/images/` (see section 6), then delete `CREDITS.md` |
 | Portfolio titles and descriptions | `js/data.js` |
 | Testimonials | `js/data.js` (real, approved quotes only) |
 | Founding story, team, credentials (optional) | `about.html` (`EDITABLE` comments) |
 | Service deliverables: confirm each "What you receive" list matches what you actually offer | `services.html` |
 | Service area wording | `js/config.js` → `serviceArea` |
-| Logo (if a real one exists) | replace the `.wordmark` markup and `favicon.svg` / `assets/icons/` |
+| Logo master files (optional) | the website logos were traced from the supplied artwork; if the designer has original vector files (AI/SVG/PDF), swap them in (see section 6b) |
 
 ---
 
 ## 14. Credits
 
 - Placeholder photography: Unsplash contributors, listed in `assets/images/CREDITS.md`.
-- Fonts: [Archivo](https://fonts.google.com/specimen/Archivo) and [Cormorant Garamond](https://fonts.google.com/specimen/Cormorant+Garamond), SIL Open Font License, self-hosted.
+- Logo: Ingabo Kreative brand artwork, vectorised to SVG for the website.
+- Font: [Archivo](https://fonts.google.com/specimen/Archivo), SIL Open Font License, self-hosted.

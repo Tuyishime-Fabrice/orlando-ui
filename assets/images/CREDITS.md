@@ -1,7 +1,7 @@
 # Placeholder image credits
 
 Every image in this folder is a **temporary placeholder** downloaded from [Unsplash](https://unsplash.com) under the [Unsplash License](https://unsplash.com/license) (free to use, attribution appreciated but not required).
-Replace them with Ingabo Kreatives' own photography before launch: the site should only show work the agency actually produced.
+Replace them with Ingabo Kreative' own photography before launch: the site should only show work the agency actually produced.
 
 To replace an image, overwrite the file with your own photo using **the same filename** (see README → *Replacing images*).
 

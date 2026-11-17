@@ -1,5 +1,5 @@
 /* ==========================================================================
-   INGABO KREATIVES — Core behaviour
+   INGABO KREATIVE — Core behaviour
    - Shared helpers (IK namespace)
    - Applies config.js values (WhatsApp, email, phone, socials)
    - Hero slideshow · reveal on scroll · back-to-top · image fallback

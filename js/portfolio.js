@@ -1,5 +1,5 @@
 /* ==========================================================================
-   INGABO KREATIVES — Portfolio grid & filters
+   INGABO KREATIVE — Portfolio grid & filters
    Renders projects from js/data.js into any element with [data-portfolio]:
      data-portfolio="featured"  → only items with featured: true (home)
      data-portfolio="all"       → every item, with category filters
