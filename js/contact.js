@@ -4,7 +4,7 @@
    - If IK_CONFIG.formEndpoint is set, the form is POSTed there.
    - If not, nothing is "sent" silently: the visitor gets a ready-made
      WhatsApp message (and an email alternative) built from their answers.
-   - contact.html?service=weddings pre-selects the service.
+   - contact/?service=weddings pre-selects the service.
    ========================================================================== */
 (function () {
   "use strict";

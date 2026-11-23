@@ -9,11 +9,11 @@ Plain HTML, CSS and JavaScript: no framework, no build step, no database. It run
 
 ```text
 ingabo-kreatives/
-├── index.html            Home
-├── services.html         Services (6 detailed services, "Request a quote")
-├── portfolio.html        Portfolio (filters + lightbox)
-├── about.html            About
-├── contact.html          Contact & booking form
+├── index.html            Home                       → /
+├── services/index.html   Services (6 detailed services, "Request a quote") → /services/
+├── portfolio/index.html  Portfolio (filters + lightbox) → /portfolio/
+├── about/index.html      About                      → /about/
+├── contact/index.html    Contact & booking form     → /contact/
 ├── 404.html              "Page not found" page
 ├── favicon.svg           Browser-tab icon (IK monogram)
 ├── site.webmanifest      App/bookmark metadata
@@ -59,7 +59,11 @@ python3 -m http.server 8080
 
 Then open <http://localhost:8080>. (Alternatively: `npx serve .`, or the "Live Server" extension in VS Code.)
 
-You can also double-click `index.html`; everything works except the 404 page, which expects to live on a real server.
+Use a local server rather than double-clicking `index.html`. The pages live in folders so the web addresses have no `.html` at the end (`/services/`, `/portfolio/`, …), and only a server turns a folder address into its `index.html`.
+
+### Clean URLs (no `.html`)
+
+Each page except the home page is an `index.html` inside a folder named after the page, so every host serves it at a clean address such as `https://www.ingabokreative.com/services/` with no rewrite rules. Links inside the site are relative (`../contact/`), so the site also works when it is published in a sub-folder. When you add a page, follow the same pattern: create `new-page/index.html`, prefix its CSS, JS and image paths with `../`, and add it to `sitemap.xml`. `404.html` stays at the root and uses root paths (`/css/…`) because the host shows it at any address.
 
 ---
 
@@ -73,8 +77,8 @@ The site is just files, so any host works:
 
 **Before launch, replace the placeholder domain.** Search all files for `https://www.ingabokreative.com` and replace it with your real domain. It appears in:
 
-- every `.html` file (`canonical`, `og:url`, `og:image`)
-- the structured data blocks in `index.html` and `services.html`
+- every page's `index.html` (`canonical`, `og:url`, `og:image`)
+- the structured data blocks in `index.html` and `services/index.html`
 - `sitemap.xml` and `robots.txt`
 
 Enable HTTPS on your host (most offer free certificates).
@@ -114,7 +118,7 @@ The form has full validation (required fields, email and phone format, no past d
 
 To use Formspree: create a form, copy its endpoint (`https://formspree.io/f/xxxxxx`), paste it into `formEndpoint`. That's all. A hidden spam-trap field is already included.
 
-Links like `contact.html?service=weddings` pre-select the service (the *Request a quote* buttons use this).
+Links like `contact/?service=weddings` pre-select the service (the *Request a quote* buttons use this).
 
 ---
 
@@ -180,7 +184,7 @@ Text lives directly in the HTML files and is plain, readable markup.
 
 The header, mobile menu and footer are repeated in each page (that's what keeps the site framework-free). To change a menu item or footer link, use your editor's **find-and-replace across files** so all six pages stay identical.
 
-Placeholders marked `<!-- EDITABLE: … -->` in `about.html` show where to add the founding story and an optional team section, once real details are confirmed.
+Placeholders marked `<!-- EDITABLE: … -->` in `about/index.html` show where to add the founding story and an optional team section, once real details are confirmed.
 
 ---
 
@@ -208,7 +212,7 @@ Design notes: navy and yellow carry the brand; the photography carries everythin
 
 The site is structured for a second language without rework:
 
-1. Copy the pages into a `rw/` folder (`rw/index.html`, …) and translate the text. Set `<html lang="rw">`.
+1. Copy the pages into a `rw/` folder (`rw/index.html`, `rw/services/index.html`, …) and translate the text. Set `<html lang="rw">`.
 2. Link each pair with `<link rel="alternate" hreflang="en" href="…">` / `hreflang="rw"` in both versions.
 3. Add a small "EN / RW" link to the header.
 4. Translate the WhatsApp messages by giving `rw/` pages their own copy of `config.js` (or add a `whatsappMessagesRw` block).
@@ -239,18 +243,19 @@ After launch:
 Tested in Chromium at 320, 375/390, 820, 1440 px:
 
 - **Functional:** 64 automated checks passed, covering navigation, mobile menu (focus trap, Escape, focus return), hero pause/play, back-to-top, every WhatsApp link, portfolio filters and URL state, lightbox (keyboard, buttons, touch swipe, YouTube/Vimeo/MP4 embeds), form validation, WhatsApp/email hand-off, form-service POST, image fallback and reduced motion.
+- **Links:** every internal link, image, `srcset`, script and stylesheet on every page (including the 404 page served at a nested address) returns 200, and no link points at a `.html` address.
 - **Accessibility:** axe-core reports **0 violations** on every page at mobile and desktop widths (WCAG 2.1 AA rules).
 - **Lighthouse (local server):**
 
   | Page | Performance (desktop / mobile) | Accessibility | Best practices | SEO |
   |---|---|---|---|---|
-  | Home | 97 / 89 | 100 | 100 | 100 |
-  | Services | 99 / 81 | 100 | 100 | 100 |
-  | Portfolio | 95 / 77 | 100 | 100 | 100 |
+  | Home | 97 / 81–89 | 100 | 100 | 100 |
+  | Services | 99 / 84 | 100 | 100 | 100 |
+  | Portfolio | 95 / 76 | 100 | 100 | 100 |
   | About | 98 / 80 | 100 | 100 | 100 |
   | Contact | 100 / 98 | 100 | 100 | 100 |
 
-  Layout shift (CLS) is 0 on every page. Mobile scores use Lighthouse's throttled slow-4G profile and are photo-weight bound. Following the image guidance in section 6 keeps them there; a CDN or host with HTTP/2 and caching will improve real-world numbers further.
+  Mobile figures re-measured after the move to clean URLs (Home varies between runs). Layout shift (CLS) is 0 on every page, including repeated Portfolio runs. Mobile scores use Lighthouse's throttled slow-4G profile and are photo-weight bound. Following the image guidance in section 6 keeps them there; a CDN or host with HTTP/2 and caching will improve real-world numbers further.
 - No horizontal scrolling at 320 px. No JavaScript errors.
 
 ---
@@ -264,12 +269,12 @@ Tested in Chromium at 320, 375/390, 820, 1440 px:
 | Email address | `js/config.js` → `email` |
 | Social profile URLs | `js/config.js` → `social` |
 | Form service (optional) | `js/config.js` → `formEndpoint` |
-| Website domain | all `.html` files, `sitemap.xml`, `robots.txt` (search `ingabokreative.com`) |
+| Website domain | all HTML pages, `sitemap.xml`, `robots.txt` (search `ingabokreative.com`) |
 | All photographs | `assets/images/` (see section 6), then delete `CREDITS.md` |
 | Portfolio titles and descriptions | `js/data.js` |
 | Testimonials | `js/data.js` (real, approved quotes only) |
-| Founding story, team, credentials (optional) | `about.html` (`EDITABLE` comments) |
-| Service deliverables: confirm each "What you receive" list matches what you actually offer | `services.html` |
+| Founding story, team, credentials (optional) | `about/index.html` (`EDITABLE` comments) |
+| Service deliverables: confirm each "What you receive" list matches what you actually offer | `services/index.html` |
 | Service area wording | `js/config.js` → `serviceArea` |
 | Logo master files (optional) | the website logos were traced from the supplied artwork; if the designer has original vector files (AI/SVG/PDF), swap them in (see section 6b) |
 

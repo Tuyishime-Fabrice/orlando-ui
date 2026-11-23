@@ -3,7 +3,7 @@
    Renders projects from js/data.js into any element with [data-portfolio]:
      data-portfolio="featured"  → only items with featured: true (home)
      data-portfolio="all"       → every item, with category filters
-   Filter state is kept in the URL: portfolio.html?filter=weddings
+   Filter state is kept in the URL: portfolio/?filter=weddings
    ========================================================================== */
 (function () {
   "use strict";
@@ -23,9 +23,9 @@
   };
 
   function imgAttrs(item, sizes) {
-    var full = IK.escapeHTML(item.image);
+    var full = IK.escapeHTML(IK.asset(item.image));
     if (!item.thumb) return 'src="' + full + '"';
-    var thumb = IK.escapeHTML(item.thumb);
+    var thumb = IK.escapeHTML(IK.asset(item.thumb));
     return 'src="' + thumb + '" srcset="' + thumb + " 700w, " + full + " " + (item.width || 1400) + 'w" sizes="' + sizes + '"';
   }
 
@@ -75,8 +75,8 @@
       var item = source[parseInt(btn.parentNode.getAttribute("data-index"), 10)];
       var list = visibleItems().map(function (p) {
         return {
-          image: p.image, alt: p.alt, title: p.title, description: p.description,
-          categoryLabel: labels[p.category], video: p.video
+          image: IK.asset(p.image), alt: p.alt, title: p.title, description: p.description,
+          categoryLabel: labels[p.category], video: IK.asset(p.video)
         };
       });
       IK.Lightbox.open(list, visibleItems().indexOf(item), btn);

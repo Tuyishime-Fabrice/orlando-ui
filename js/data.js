@@ -5,7 +5,7 @@
    ========================================================================== */
 window.IK_DATA = {
   /* Portfolio filter categories, in display order.
-     `id` is used in URLs: portfolio.html?filter=weddings */
+     `id` is used in URLs: portfolio/?filter=weddings */
   categories: [
     { id: "weddings", label: "Weddings" },
     { id: "events", label: "Events" },

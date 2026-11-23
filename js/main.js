@@ -17,6 +17,16 @@
 
   IK.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
+  /* Site root, worked out from this script's own URL (js/main.js), so pages
+     in sub-folders (/services/, /portfolio/ ...) resolve data.js image paths. */
+  var self = document.currentScript;
+  IK.root = self && self.src ? new URL("../", self.src).href : "";
+  /** Resolve a site-relative path such as "assets/images/x.jpg" */
+  IK.asset = function (path) {
+    if (!path || /^(?:[a-z][a-z0-9+.-]*:|\/)/i.test(path)) return path;
+    return IK.root + path;
+  };
+
   /* ---- Helpers ---------------------------------------------------------- */
   IK.$ = function (sel, root) { return (root || document).querySelector(sel); };
   IK.$$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
