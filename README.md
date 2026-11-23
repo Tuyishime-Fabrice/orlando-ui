@@ -73,7 +73,8 @@ The site is just files, so any host works:
 
 - **Shared hosting / cPanel (e.g. a Rwandan host):** upload the *contents* of this folder into `public_html` using File Manager or FTP. In cPanel's *Error Pages* (or in `.htaccess`, add `ErrorDocument 404 /404.html`), point 404 errors at `404.html`.
 - **Netlify:** drag the folder onto <https://app.netlify.com/drop>. `404.html` is picked up automatically.
-- **GitHub Pages / Cloudflare Pages / Vercel:** publish the folder as a static site; no build command is needed.
+- **Vercel:** import the GitHub repository, choose the **Other** framework preset, and leave the build command and output directory empty. `vercel.json` makes Vercel redirect `/services` to `/services/` (the address in the canonical tags and sitemap), redirect any old `.html` address to its clean URL, and serve `404.html` for missing pages. Add your domain under *Project → Settings → Domains*.
+- **GitHub Pages / Cloudflare Pages:** publish the folder as a static site; no build command is needed.
 
 **Before launch, replace the placeholder domain.** Search all files for `https://www.ingabokreative.com` and replace it with your real domain. It appears in:
 
