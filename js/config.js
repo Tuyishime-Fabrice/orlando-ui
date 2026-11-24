@@ -1,40 +1,39 @@
 /* ==========================================================================
-   INGABO KREATIVE — SITE CONFIGURATION
+   INGABO KREATIVE: SITE CONFIGURATION
    This is the ONE place to update business contact details.
    Every WhatsApp button, phone number, email link and social link on the
-   website reads from here.
+   website reads from here. After changing social links, the next Vercel
+   deploy (or `node scripts/build.js`) writes them into every page.
    ========================================================================== */
 window.IK_CONFIG = {
   businessName: "Ingabo Kreative",
+  siteUrl: "https://www.ingabocreative.com",
 
   /* WhatsApp number in international format, DIGITS ONLY:
-     country code (250) + number without the leading 0.
-     Example: 0788 123 456  ->  "250788123456"
-     PLACEHOLDER — replace before launch. */
-  whatsappNumber: "2507XXXXXXXX",
+     country code (250) + number without the leading 0. */
+  whatsappNumber: "250799902322",
 
-  /* How the phone number is displayed on the page. PLACEHOLDER. */
-  phoneDisplay: "+250 7XX XXX XXX",
+  /* How the phone number is displayed on the page. Phone links dial it. */
+  phoneDisplay: "+250 799 902 322",
 
-  /* Public email address. PLACEHOLDER — replace before launch. */
-  email: "hello@ingabokreative.com",
+  /* Public email address. Contact form enquiries are delivered here. */
+  email: "ingabomedia@gmail.com",
 
   /* Shown on the contact page and footer. */
   location: "Kigali, Rwanda",
-  serviceArea: "Available across Rwanda and for travel on request",
+  serviceArea: "Across Rwanda",
 
-  /* Optional: a form-handling service URL (e.g. Formspree, Basin, Getform).
-     Leave empty ("") and the contact form will hand the inquiry over to
-     WhatsApp or email instead of pretending to send it. */
-  formEndpoint: "",
+  /* The contact form posts here (FormSubmit, delivered to the email above). */
+  formEndpoint: "https://formsubmit.co/ajax/ingabomedia@gmail.com",
+  formSubject: "New enquiry from ingabocreative.com",
 
-  /* Social profiles. Replace with the agency's real profile URLs.
-     Set any value to "" to hide that icon everywhere. */
+  /* Social profiles: paste the full profile URL, for example
+     "https://www.instagram.com/your-handle/". Leave a value empty ("")
+     and that icon is not shown anywhere on the site. */
   social: {
-    instagram: "https://www.instagram.com/",
-    facebook: "https://www.facebook.com/",
-    tiktok: "https://www.tiktok.com/",
-    youtube: "https://www.youtube.com/"
+    instagram: "",
+    facebook: "",
+    linkedin: ""
   },
 
   /* Pre-filled WhatsApp messages. Keys match the service IDs used on

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   INGABO KREATIVE — Portfolio grid & filters
+   INGABO KREATIVE: Portfolio grid & filters
    Renders projects from js/data.js into any element with [data-portfolio]:
      data-portfolio="featured"  → only items with featured: true (home)
      data-portfolio="all"       → every item, with category filters
@@ -117,10 +117,13 @@
         }
       });
       if (status) {
-        var n = counts[id];
-        status.textContent = id === "all"
-          ? "Showing all " + n + " projects"
-          : "Showing " + n + " project" + (n === 1 ? "" : "s") + " in " + labels[id];
+        var shown = visibleItems();
+        var films = shown.filter(function (p) { return p.video; }).length;
+        var photos = shown.length - films;
+        var noun = !films ? (photos === 1 ? "photo" : "photos")
+          : !photos ? (films === 1 ? "film" : "films")
+          : "photos and films";
+        status.textContent = "Showing " + shown.length + " " + noun + (id === "all" ? "" : " in " + labels[id]);
       }
       if (window.history && window.history.replaceState) {
         var url = new URL(window.location.href);

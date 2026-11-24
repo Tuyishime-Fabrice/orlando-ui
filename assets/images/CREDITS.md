@@ -8,8 +8,6 @@ To replace an image, overwrite the file with your own photo using **the same fil
 | File | Photographer | Source |
 |---|---|---|
 | `hero/hero-01.jpg` | Amari Shutters | https://images.unsplash.com/photo-1784202388318-a2caaeffe4b7 |
-| `hero/hero-02.jpg` | Jakob Owens | https://images.unsplash.com/photo-1625690303837-654c9666d2d0 |
-| `hero/hero-03.jpg` | Graca Assane | https://images.unsplash.com/photo-1681545303529-b6beb2e19f02 |
 | `services/wedding.jpg` | Samwel francis | https://images.unsplash.com/photo-1695281535578-ce371088bb3e |
 | `services/events.jpg` | Ayrus Hill | https://images.unsplash.com/photo-1763280290224-1b7ed510a31e |
 | `services/portrait.jpg` | Prince Akachi | https://images.unsplash.com/photo-1531123897727-8f129e1688ce |

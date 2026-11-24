@@ -1,5 +1,5 @@
 /* ==========================================================================
-   INGABO KREATIVE — Lightbox
+   INGABO KREATIVE: Lightbox
    IK.Lightbox.open(items, startIndex, triggerElement)
    items: [{ image, alt, title, description, categoryLabel, video }]
    Keyboard: ← / → navigate · Esc closes · Tab stays inside

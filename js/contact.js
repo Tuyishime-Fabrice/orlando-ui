@@ -1,10 +1,10 @@
 /* ==========================================================================
-   INGABO KREATIVE — Contact / booking form
+   INGABO KREATIVE: Contact / enquiry form
    - Client-side validation with inline and summary messages
-   - If IK_CONFIG.formEndpoint is set, the form is POSTed there.
-   - If not, nothing is "sent" silently: the visitor gets a ready-made
-     WhatsApp message (and an email alternative) built from their answers.
-   - contact/?service=weddings pre-selects the service.
+   - Sends the enquiry as JSON to FormSubmit (IK_CONFIG.formEndpoint),
+     which emails it to IK_CONFIG.email
+   - Without JavaScript the form posts to FormSubmit directly
+   - contact/?service=weddings pre-selects the service
    ========================================================================== */
 (function () {
   "use strict";
@@ -16,6 +16,7 @@
   var summary = IK.$("[data-form-summary]");
   var success = IK.$("[data-form-success]");
   var submitBtn = IK.$("[type=submit]", form);
+  var submitLabel = submitBtn.textContent;
 
   var fields = {
     name: form.elements.name,
@@ -31,14 +32,6 @@
   var wanted = new URLSearchParams(window.location.search).get("service");
   if (wanted && fields.service.querySelector('option[value="' + CSS.escape(wanted) + '"]')) {
     fields.service.value = wanted;
-  }
-
-  /* Button label says exactly what will happen */
-  if (CONFIG.formEndpoint) {
-    var label = IK.$("[data-submit-label]", form);
-    var note = IK.$("[data-form-note]", form);
-    if (label) label.textContent = "Send inquiry";
-    if (note) note.textContent = "We only use your details to reply to your inquiry.";
   }
 
   /* Dates can't be in the past */
@@ -97,59 +90,31 @@
     });
   });
 
-  /* ---- Message builder --------------------------------------------------- */
+  /* ---- What gets sent ------------------------------------------------------ */
   function formatDate(v) {
     if (!v) return "";
     var d = new Date(v + "T00:00:00");
     return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
   }
 
-  function buildMessage() {
-    var serviceText = fields.service.options[fields.service.selectedIndex].text;
-    var lines = [
-      "Hello " + (CONFIG.businessName || "Ingabo Kreative") + ", I'd like to make an inquiry.",
-      "",
-      "Name: " + fields.name.value.trim(),
-      "Email: " + fields.email.value.trim(),
-      "Phone: " + fields.phone.value.trim(),
-      "Service: " + serviceText
-    ];
-    if (fields.date.value) lines.push("Date: " + formatDate(fields.date.value));
-    if (fields.location.value.trim()) lines.push("Location: " + fields.location.value.trim());
-    if (fields.details.value.trim()) lines.push("", "Project details:", fields.details.value.trim());
-    return lines.join("\n");
+  function payload() {
+    var data = {
+      name: fields.name.value.trim(),
+      email: fields.email.value.trim(),
+      phone: fields.phone.value.trim(),
+      service: fields.service.options[fields.service.selectedIndex].text
+    };
+    if (fields.date.value) data.date = formatDate(fields.date.value);
+    if (fields.location.value.trim()) data.location = fields.location.value.trim();
+    if (fields.details.value.trim()) data.details = fields.details.value.trim();
+    data._subject = CONFIG.formSubject || "New enquiry";
+    data._template = "table";
+    data._honey = form.elements._honey ? form.elements._honey.value : "";
+    return data;
   }
 
-  /* ---- Success states ------------------------------------------------------ */
-  function showHandOff(message, note) {
-    var serviceText = fields.service.options[fields.service.selectedIndex].text;
-    IK.$("[data-success-title]", success).textContent = "Your inquiry is ready to send";
-    IK.$("[data-success-text]", success).textContent = note ||
-      "Send it on WhatsApp for the quickest reply, or by email. Your answers are already filled in: just press send.";
-    IK.$("[data-success-preview]", success).textContent = message;
-    IK.$("[data-success-preview]", success).hidden = false;
-    var wa = IK.$("[data-success-whatsapp]", success);
-    wa.href = IK.whatsappURL(message);
-    wa.hidden = false;
-    var mail = IK.$("[data-success-email]", success);
-    mail.href = "mailto:" + (CONFIG.email || "") +
-      "?subject=" + encodeURIComponent("Inquiry: " + serviceText + " — " + fields.name.value.trim()) +
-      "&body=" + encodeURIComponent(message);
-    mail.hidden = !CONFIG.email;
-    reveal();
-  }
-
-  function showSent(message) {
-    IK.$("[data-success-title]", success).textContent = "Thank you, " + fields.name.value.trim().split(" ")[0] + ". We've received your inquiry.";
-    IK.$("[data-success-text]", success).textContent =
-      "We'll reply by email or phone soon. If your date is close, message us on WhatsApp as well.";
-    IK.$("[data-success-preview]", success).hidden = true;
-    IK.$("[data-success-whatsapp]", success).href = IK.whatsappURL(message);
-    IK.$("[data-success-email]", success).hidden = true;
-    reveal();
-  }
-
-  function reveal() {
+  /* ---- Outcomes ------------------------------------------------------------- */
+  function showSent() {
     form.hidden = true;
     success.hidden = false;
     var heading = IK.$("[data-success-title]", success);
@@ -158,11 +123,15 @@
     success.scrollIntoView({ behavior: IK.reducedMotion.matches ? "auto" : "smooth", block: "start" });
   }
 
-  IK.$("[data-success-edit]", success).addEventListener("click", function () {
-    success.hidden = true;
-    form.hidden = false;
-    fields.name.focus();
-  });
+  function showFailed() {
+    var phone = CONFIG.phoneDisplay || "";
+    var email = CONFIG.email || "";
+    summary.hidden = false;
+    summary.innerHTML = "<p>Your enquiry did not send. Please WhatsApp us on " +
+      '<a href="' + IK.whatsappURL(IK.whatsappMessage("booking")) + '" target="_blank" rel="noopener">' + IK.escapeHTML(phone) + "</a>" +
+      ' or email <a href="mailto:' + IK.escapeHTML(email) + '">' + IK.escapeHTML(email) + "</a>.</p>";
+    summary.focus();
+  }
 
   /* ---- Submit ------------------------------------------------------------- */
   form.addEventListener("submit", function (e) {
@@ -180,28 +149,23 @@
     }
     summary.hidden = true;
 
-    // Honeypot: bots fill hidden fields, people don't
-    if (form.elements.company && form.elements.company.value) return;
-
-    var message = buildMessage();
-
-    if (!CONFIG.formEndpoint) { showHandOff(message); return; }
+    // Honeypot: bots fill the hidden field, people don't
+    if (form.elements._honey && form.elements._honey.value) { showSent(); return; }
 
     submitBtn.disabled = true;
-    var original = submitBtn.textContent;
-    submitBtn.textContent = "Sending…";
+    submitBtn.textContent = "Sending...";
     fetch(CONFIG.formEndpoint, {
       method: "POST",
-      headers: { Accept: "application/json" },
-      body: new FormData(form)
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(payload())
     }).then(function (res) {
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      showSent(message);
-    }).catch(function () {
-      showHandOff(message, "We couldn't send the form just now. Your inquiry is ready below: send it on WhatsApp or by email instead.");
-    }).then(function () {
+      return res.json().catch(function () { return {}; }).then(function (body) {
+        // FormSubmit answers { success: "true" } once the address is activated
+        if (!res.ok || String(body.success) !== "true") throw new Error(body.message || "HTTP " + res.status);
+      });
+    }).then(showSent, showFailed).then(function () {
       submitBtn.disabled = false;
-      submitBtn.textContent = original;
+      submitBtn.textContent = submitLabel;
     });
   });
 })();

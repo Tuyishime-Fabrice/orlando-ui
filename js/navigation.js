@@ -1,5 +1,5 @@
 /* ==========================================================================
-   INGABO KREATIVE — Header & navigation
+   INGABO KREATIVE: Header & navigation
    - Transparent header over the home hero turns solid on scroll
    - Header hides while scrolling down, returns when scrolling up
    - Accessible mobile menu (focus trap, Escape to close, scroll lock)

@@ -1,8 +1,8 @@
 /* ==========================================================================
-   INGABO KREATIVE — Core behaviour
+   INGABO KREATIVE: Core behaviour
    - Shared helpers (IK namespace)
-   - Applies config.js values (WhatsApp, email, phone, socials)
-   - Hero slideshow · reveal on scroll · back-to-top · image fallback
+   - Applies config.js values (WhatsApp, email, phone)
+   - Reveal on scroll, back to top, floating WhatsApp button, image fallback
    - Services page sub-navigation highlight
    ========================================================================== */
 (function () {
@@ -83,6 +83,12 @@
       a.rel = "noopener";
     });
 
+    // Phone links: <a data-config-tel>
+    IK.$$("[data-config-tel]").forEach(function (a) {
+      var digits = String(CONFIG.phoneDisplay || "").replace(/\D/g, "");
+      if (digits) a.href = "tel:+" + digits;
+    });
+
     // Text values: <span data-config-text="phoneDisplay">
     IK.$$("[data-config-text]").forEach(function (el) {
       var val = CONFIG[el.getAttribute("data-config-text")];
@@ -96,14 +102,7 @@
       if (!a.hasAttribute("data-keep-text")) a.textContent = CONFIG.email;
     });
 
-    // Social links: <a data-social="instagram">; hidden when empty
-    var social = CONFIG.social || {};
-    IK.$$("[data-social]").forEach(function (a) {
-      var url = social[a.getAttribute("data-social")];
-      var wrapper = a.closest("li") || a;
-      if (url) { a.href = url; a.target = "_blank"; a.rel = "noopener"; wrapper.hidden = false; }
-      else { wrapper.hidden = true; }
-    });
+    // Social icons are written into the HTML by scripts/build.js
 
     IK.$$("[data-year]").forEach(function (el) { el.textContent = new Date().getFullYear(); });
   }
@@ -122,69 +121,6 @@
     IK.$$("img").forEach(function (img) {
       if (img.complete && img.naturalWidth === 0 && img.getAttribute("src")) mark(img);
     });
-  }
-
-  /* ---- Hero slideshow ---------------------------------------------------- */
-  function initHero() {
-    var hero = IK.$("[data-hero]");
-    if (!hero) return;
-    var slides = IK.$$(".hero__slide", hero);
-    var caption = IK.$("[data-hero-caption]", hero);
-    var count = IK.$("[data-hero-count]", hero);
-    var toggle = IK.$("[data-hero-toggle]", hero);
-    if (slides.length < 2) { if (toggle) toggle.hidden = true; return; }
-
-    var index = 0;
-    var timer = null;
-    var DELAY = 6500;
-    var playing = !IK.reducedMotion.matches;
-
-    function pad(n) { return (n < 10 ? "0" : "") + n; }
-
-    function show(i) {
-      var next = slides[i];
-      loadSlide(next);
-      slides[index].classList.remove("is-active");
-      slides[index].setAttribute("aria-hidden", "true");
-      next.classList.add("is-active");
-      next.removeAttribute("aria-hidden");
-      index = i;
-      if (caption) caption.textContent = next.getAttribute("data-caption") || "";
-      if (count) count.textContent = pad(i + 1) + " / " + pad(slides.length);
-    }
-    // Later slides carry data-src/data-srcset until they are first needed
-    function loadSlide(slide) {
-      var img = IK.$("img", slide);
-      if (!img || !img.dataset.src) return;
-      IK.$$("source[data-srcset]", slide).forEach(function (src) {
-        src.srcset = src.dataset.srcset;
-        src.removeAttribute("data-srcset");
-      });
-      img.src = img.dataset.src;
-      img.removeAttribute("data-src");
-    }
-    function preloadNext() { loadSlide(slides[(index + 1) % slides.length]); }
-    function tick() { show((index + 1) % slides.length); preloadNext(); }
-    function start() { stop(); timer = window.setInterval(tick, DELAY); }
-    function stop() { if (timer) window.clearInterval(timer); timer = null; }
-    function setPlaying(p) {
-      playing = p;
-      if (toggle) {
-        toggle.setAttribute("aria-pressed", String(!p));
-        toggle.setAttribute("aria-label", p ? "Pause slideshow" : "Play slideshow");
-        toggle.classList.toggle("is-paused", !p);
-      }
-      if (p) start(); else stop();
-    }
-
-    if (toggle) toggle.addEventListener("click", function () { setPlaying(!playing); });
-    document.addEventListener("visibilitychange", function () {
-      if (document.hidden) stop(); else if (playing) start();
-    });
-
-    // Load the second slide once the page has settled, then begin
-    window.addEventListener("load", function () { preloadNext(); });
-    setPlaying(playing);
   }
 
   /* ---- Reveal on scroll (image groups only) ------------------------------ */
@@ -206,25 +142,24 @@
     nodes.forEach(function (n) { IK._revealObserver.observe(n); });
   };
 
-  /* ---- Back to top -------------------------------------------------------- */
+  /* ---- Back to top (footer) + floating WhatsApp button ------------------- */
   function initToTop() {
-    var fab = IK.$("[data-fab-top]");
-    function goTop(e) {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: IK.reducedMotion.matches ? "auto" : "smooth" });
-      var target = IK.$("#main");
-      if (target) target.focus({ preventScroll: true });
-    }
-    IK.$$("[data-to-top]").forEach(function (b) { b.addEventListener("click", goTop); });
+    IK.$$("[data-to-top]").forEach(function (b) {
+      b.addEventListener("click", function (e) {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: IK.reducedMotion.matches ? "auto" : "smooth" });
+        var target = IK.$("#main");
+        if (target) target.focus({ preventScroll: true });
+      });
+    });
+    // On the home page the header already offers WhatsApp; the floating
+    // button appears once the hero has mostly scrolled away.
     var waFab = IK.$(".fab--whatsapp");
     var hero = IK.$("[data-hero]");
-    if (!fab) return;
+    if (!waFab || !hero) return;
     var ticking = false;
     function update() {
-      fab.classList.toggle("is-visible", window.scrollY > window.innerHeight * 1.2);
-      // On the home page the header already offers WhatsApp; the floating
-      // button appears once the hero has mostly scrolled away.
-      if (waFab && hero) waFab.classList.toggle("is-tucked", window.scrollY < hero.offsetHeight * 0.6);
+      waFab.classList.toggle("is-tucked", window.scrollY < hero.offsetHeight * 0.6);
       ticking = false;
     }
     window.addEventListener("scroll", function () {
@@ -258,28 +193,10 @@
     });
   }
 
-  /* ---- Testimonials (rendered from data.js) ------------------------------- */
-  function initTestimonials() {
-    var wrap = IK.$("[data-testimonials]");
-    if (!wrap) return;
-    var section = wrap.closest("section");
-    var list = (window.IK_DATA && window.IK_DATA.testimonials) || [];
-    if (!list.length) { if (section) section.hidden = true; return; }
-    wrap.innerHTML = list.map(function (t) {
-      return '<figure class="testimonial">' +
-        (t.placeholder ? '<span class="editable-note">Sample testimonial: replace before launch</span>' : "") +
-        "<blockquote><p>" + IK.escapeHTML(t.quote) + "</p></blockquote>" +
-        "<figcaption><strong>" + IK.escapeHTML(t.name) + "</strong>" +
-        '<span class="muted">' + IK.escapeHTML(t.context) + "</span></figcaption></figure>";
-    }).join("");
-  }
-
   /* ---- Boot ---------------------------------------------------------------- */
   applyConfig();
   handleBrokenImages();
-  initHero();
   initToTop();
   initServiceNav();
-  initTestimonials();
   IK.observeReveal(IK.$$(".reveal"));
 })();

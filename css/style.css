@@ -1,12 +1,12 @@
 /* ==========================================================================
-   INGABO KREATIVE — Core styles
+   INGABO KREATIVE: Core styles
    1. Fonts   2. Design tokens   3. Reset & base   4. Typography
    5. Layout primitives   6. Page sections
    Components (buttons, nav, cards, lightbox, forms) live in components.css.
    Breakpoints (mobile-first, min-width): 600px · 900px · 1200px · 1600px
    ========================================================================== */
 
-/* 1. Fonts — self-hosted variable fonts (assets/fonts) ------------------- */
+/* 1. Fonts: self-hosted variable fonts (assets/fonts) ------------------- */
 @font-face {
   font-family: "Archivo";
   src: url("../assets/fonts/archivo-var-latin.woff2") format("woff2");
@@ -18,7 +18,7 @@
 
 /* 2. Design tokens ------------------------------------------------------- */
 :root {
-  /* Colour — from the Ingabo Kreative logo */
+  /* Colour: from the Ingabo Kreative logo */
   --c-navy: #0A2471;         /* Brand navy: dark sections, buttons, logo on light */
   --c-navy-deep: #061650;    /* Hover / pressed navy */
   --c-navy-2: #13307F;       /* Raised surface on navy */
@@ -79,13 +79,13 @@
   --container-narrow: 880px;
   --measure: 62ch;
 
-  /* Radii — kept deliberately small */
+  /* Radii: kept deliberately small */
   --r-0: 0;
   --r-1: 2px;
   --r-2: 4px;
   --r-round: 999px;
 
-  /* Shadows — used only for floating UI */
+  /* Shadows: used only for floating UI */
   --shadow-float: 0 10px 30px -12px rgba(6, 20, 72, 0.5);
 
   /* Motion */
@@ -296,7 +296,7 @@ img.is-broken {
   color: var(--c-stone);
 }
 
-/* Reveal — applied only to image groups, never to body text */
+/* Reveal: applied only to image groups, never to body text */
 .reveal {
   opacity: 0;
   transform: translateY(14px);
@@ -323,19 +323,13 @@ img.is-broken {
 .hero__slide {
   position: absolute;
   inset: 0;
-  opacity: 0;
-  transition: opacity var(--dur-hero) var(--ease-in-out);
 }
-.hero__slide.is-active { opacity: 1; }
 .hero__slide picture { display: block; width: 100%; height: 100%; }
 .hero__slide img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.04);
-  transition: transform 8s linear;
 }
-.hero__slide.is-active img { transform: scale(1); }
 .hero__frame::after {
   /* Legibility scrim for headline + header only */
   content: "";
@@ -352,39 +346,12 @@ img.is-broken {
   bottom: clamp(1.5rem, 1rem + 3vw, 3.5rem);
   z-index: 2;
 }
-.hero__title { max-width: 14ch; }
+.hero__title {
+  max-width: 14ch;
+  /* Phones: keep the longest word ("PHOTOGRAPHY") on one line */
+  font-size: min(var(--fs-hero), calc((100vw - 2 * var(--gutter)) / 9.8));
+}
 .hero__title span { display: block; }
-.hero__plate {
-  position: absolute;
-  z-index: 2;
-  right: var(--gutter);
-  top: calc(var(--header-h) + var(--s-3));
-  display: flex;
-  align-items: center;
-  gap: var(--s-3);
-  font-size: var(--fs-xs);
-  letter-spacing: var(--tracking-label);
-  color: rgba(247, 245, 240, 0.86);
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
-}
-.hero__plate p { display: flex; gap: var(--s-3); align-items: baseline; }
-.hero__plate-count { color: var(--c-accent); font-variant-numeric: tabular-nums; }
-.hero__plate-caption { display: none; }
-.hero__toggle {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--r-round);
-  border: 1px solid rgba(247, 245, 240, 0.4);
-  color: var(--c-ivory);
-  transition: background-color var(--dur-2), color var(--dur-2);
-}
-.hero__toggle:hover { background: var(--c-yellow); border-color: var(--c-yellow); color: var(--c-navy); }
-.hero__toggle svg { width: 12px; height: 12px; }
-.hero__toggle .i-play,
-.hero__toggle.is-paused .i-pause { display: none; }
-.hero__toggle.is-paused .i-play { display: block; }
 .hero__below {
   display: grid;
   gap: var(--s-6);
@@ -392,26 +359,6 @@ img.is-broken {
 }
 .hero__below .lead { color: rgba(247, 245, 240, 0.86); }
 .hero__actions { display: flex; flex-wrap: wrap; gap: var(--s-3); }
-.hero__scroll {
-  display: none;
-  align-items: center;
-  gap: var(--s-3);
-  font-size: var(--fs-sm);
-  color: var(--c-grey);
-  text-decoration: none;
-}
-.hero__scroll-line {
-  display: block;
-  width: 1px;
-  height: 44px;
-  background: linear-gradient(var(--c-accent) 0 50%, var(--c-line-dark) 50% 100%);
-  background-size: 100% 200%;
-  animation: scrollcue 2.4s var(--ease-in-out) infinite;
-}
-@keyframes scrollcue {
-  0% { background-position: 0 100%; }
-  60%, 100% { background-position: 0 -100%; }
-}
 /* Orchestrated page-load sequence (the one motion moment) */
 .hero__title span,
 .hero__below > * {
@@ -420,19 +367,16 @@ img.is-broken {
 .hero__title span:nth-child(2) { animation-delay: 120ms; }
 .hero__below > *:nth-child(1) { animation-delay: 320ms; }
 .hero__below > *:nth-child(2) { animation-delay: 420ms; }
-.hero__below > *:nth-child(3) { animation-delay: 520ms; }
 @keyframes rise {
   from { opacity: 0; transform: translateY(18px); }
   to { opacity: 1; transform: none; }
 }
 @media (min-width: 900px) {
-  .hero__plate-caption { display: inline; }
   .hero__below {
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: var(--s-8);
   }
-  .hero__scroll { display: inline-flex; }
 }
 
 /* ---- Page hero (inner pages) ---- */
@@ -590,15 +534,6 @@ img.is-broken {
   }
 }
 
-/* ---- Testimonials ---- */
-.testimonials {
-  display: grid;
-  gap: var(--s-7);
-}
-@media (min-width: 900px) {
-  .testimonials { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-7); }
-}
-
 /* ---- Final CTA ---- */
 .final-cta {
   position: relative;
@@ -752,16 +687,6 @@ img.is-broken {
   line-height: 1.15;
 }
 .principle p { color: var(--c-grey); }
-.editable-note {
-  display: inline-block;
-  padding: var(--s-1) var(--s-3);
-  border: 1px dashed var(--c-accent-deep);
-  color: var(--c-accent-deep);
-  font-size: var(--fs-xs);
-  letter-spacing: var(--tracking-label);
-}
-.on-dark .editable-note { border-color: var(--c-accent); color: var(--c-accent); }
-
 /* ---- Contact page ---- */
 .contact-layout {
   display: grid;
@@ -783,10 +708,6 @@ img.is-broken {
 .contact-channel dd { font-size: var(--fs-md); }
 .contact-channel dd a { text-decoration: none; }
 .contact-channel dd a:hover { text-decoration: underline; }
-@media (max-width: 999px) {
-  /* On phones and tablets the form matters more than the photo */
-  .contact-aside > .frame { display: none; }
-}
 @media (min-width: 1000px) {
   .contact-layout { grid-template-columns: 4fr 7fr; gap: var(--s-9); }
   .contact-aside { position: sticky; top: calc(var(--header-h) + var(--s-6)); }

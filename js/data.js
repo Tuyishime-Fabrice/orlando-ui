@@ -1,7 +1,7 @@
 /* ==========================================================================
-   INGABO KREATIVE — CONTENT DATA
-   Edit portfolio projects and testimonials here. No other file needs to
-   change when you add, remove or reorder projects.
+   INGABO KREATIVE: CONTENT DATA
+   Edit portfolio projects and team members here. No other file needs to
+   change when you add, remove or reorder projects or people.
    ========================================================================== */
 window.IK_DATA = {
   /* Portfolio filter categories, in display order.
@@ -12,7 +12,11 @@ window.IK_DATA = {
     { id: "portraits", label: "Portraits" },
     { id: "commercial", label: "Commercial" },
     { id: "lifestyle", label: "Lifestyle" },
-    { id: "videography", label: "Videography" }
+    /* "videography" holds photos of crews and cameras on set. Rename the
+       label back to "Films" once real film links are added as video items. */
+    { id: "videography", label: "Behind the scenes" },
+    /* Shown automatically as soon as one project uses this category. */
+    { id: "documentary", label: "Documentary" }
   ],
 
   /* PORTFOLIO PROJECTS
@@ -32,7 +36,19 @@ window.IK_DATA = {
                   editorial layout: tiles 1 and 8 are the largest, so put
                   landscape images there.
      video        Optional. A YouTube or Vimeo link, or a path to an .mp4
-                  file. When set, the item opens as a playable film.
+                  file. When set, the tile shows a play mark and opens as a
+                  playable film in the lightbox. `image` is the poster.
+
+     Documentary example (copy into the list below and fill in):
+     {
+       title: "Film title",
+       category: "documentary",
+       image: "assets/images/portfolio/doc-01.jpg",
+       thumb: "assets/images/portfolio/thumbs/doc-01.jpg", width: 1400, height: 788,
+       alt: "What the poster image shows",
+       description: "What it is, where and when.",
+       featured: false, video: "https://www.youtube.com/watch?v=VIDEO_ID"
+     },
 
      All images below are TEMPORARY PLACEHOLDERS from Unsplash.
      Replace them with real Ingabo Kreative projects before launch. */
@@ -282,28 +298,25 @@ window.IK_DATA = {
     }
   ],
 
-  /* TESTIMONIALS
-     These are clearly marked PLACEHOLDERS. Replace `quote`, `name` and
-     `context` with real, approved client words and set placeholder: false.
-     Remove all entries (testimonials: []) to hide the section entirely. */
-  testimonials: [
-    {
-      quote: "A short quote from a couple you photographed: how the day felt, and what it was like to see the photos for the first time.",
-      name: "Client name",
-      context: "Wedding client",
-      placeholder: true
-    },
-    {
-      quote: "A line from an event organiser about how the team worked on the day and how quickly the images arrived.",
-      name: "Client name",
-      context: "Event client",
-      placeholder: true
-    },
-    {
-      quote: "A sentence from a business or brand about what the photos and films did for them.",
-      name: "Client name",
-      context: "Brand client",
-      placeholder: true
-    }
-  ]
+  /* TEAM
+     ---------------------------------------------------------------
+     One entry per person, in the order they should appear on /team/.
+     The next deploy writes the cards into team/index.html (Vercel runs
+     `node scripts/build.js`; you can also run it yourself).
+     While this list is empty, the Team page shows no cards and asks
+     search engines not to index it.
+
+     name      Full name
+     role      For example "Photographer" or "Video editor"
+     photo     Optional. Portrait photo, for example
+               "assets/images/team/first-last.jpg" (4:5 portrait, about
+               900 x 1125 px). Without a photo the card shows initials.
+     bio       Optional. One sentence.
+     linkedin  Optional. Full LinkedIn profile URL.
+
+     Example:
+     { name: "First Last", role: "Photographer", photo: "assets/images/team/first-last.jpg",
+       bio: "One sentence about this person.", linkedin: "https://www.linkedin.com/in/first-last/" },
+  */
+  team: []
 };
